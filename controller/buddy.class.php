@@ -26,9 +26,7 @@ class buddyController extends appController
 			$data = json_decode($content , 1);
 			if( intval($data['err_code']) != 0 ) 
 				return false;
-			
 			return render( $data , 'ajax' , 'raw'  );
-
 		}
 
 		return null;
@@ -41,10 +39,9 @@ class buddyController extends appController
 		if($content = send_request( 'groups' ,  $params , token()  ))
 		{
 			$data = json_decode($content , 1);
-			
+
 			if( $data['err_code'] != 0 ) return render( array( 'code' => $data['err_code'] , 'message' => $data['err_msg'] ) , 'rest' );
 			return render( array( 'code' => 0 , 'data' => $data['data'] ) , 'rest' );
-
 		}
 
 		return null;
@@ -54,11 +51,8 @@ class buddyController extends appController
 	{
 		$uid = intval(v('uid'));
 		if( $uid < 1 ) return render( array( 'code' => 100002 , 'message' => __('BAD_ARGS') ) , 'rest' );
-
 		$groups = z(t(v('groups')));
-		// remove spaces in name
 		$groups = str_replace( ',' , '|' , $groups );
-		
 		$params = array();
 		$params['uid'] = $uid;
 		$params['groups'] = $groups;
@@ -79,19 +73,13 @@ class buddyController extends appController
 
 	function add()
 	{
-
-		//ajax_echo( print_r( $_REQUEST , 1 ) );
 		$name = z(t(v('name')));
-		// remove spaces in name
 		$name = str_replace( ' ' , '' , $name );
 		if( strlen($name) < 1 ) return render( array( 'code' => 100002 , 'message' => __('BAD_ARGS') ) , 'rest' );
-
 		$email = z(t(v('email')));
 		if( strlen($email) < 1 ) return render( array( 'code' => 100002 , 'message' => __('BAD_ARGS') ) , 'rest' );
-
 		$password = z(t(v('password')));
 		if( strlen($password) < 1 ) return render( array( 'code' => 100002 , 'message' => __('BAD_ARGS') ) , 'rest' );
-
 
 		$params = array();
 		$params['name'] = $name;
@@ -118,7 +106,6 @@ class buddyController extends appController
 
 		if( intval(v('set')) == 1 ) $level = '9';
 		else $level = '1';
-
 		$params = array();
 		$params['uid'] = $uid;
 		$params['level'] = $level;
@@ -156,8 +143,4 @@ class buddyController extends appController
 
 		return render( array( 'code' => 100001 , 'message' => __('API_CONNECT_ERROR_NOTICE') ) , 'rest' );
 	}
-
-	
-
-	
 }

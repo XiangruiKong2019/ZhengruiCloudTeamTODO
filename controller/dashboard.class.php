@@ -40,7 +40,6 @@ class dashboardController extends appController
 		$params = array();
 		$params['uid'] = intval(v('uid'));
 
-		
 		if($content = send_request( 'user_reset_password' ,  $params , token()  ))
 		{
 			$data = json_decode($content , 1);
@@ -80,8 +79,6 @@ class dashboardController extends appController
 		$sql = "ALTER TABLE  `user` ADD  `groups` VARCHAR( 255 ) NOT NULL AFTER  `desp` ,
 ADD INDEX (  `groups` )";
 		run_sql( $sql );
-	
-		
 
 		$sql = "CREATE TABLE IF NOT EXISTS `online` (
   `uid` int(11) NOT NULL,
@@ -105,10 +102,8 @@ PRIMARY KEY (  `folder_name` )
 
 		$sql = "ALTER TABLE  `todo` ADD  `comment_count` INT NOT NULL DEFAULT  '0' ";
 		run_sql( $sql );
-		
-		
-		return info_page( __('DB_UPGRADE_SUCCESS') );	
-		
+
+		return info_page( __('DB_UPGRADE_SUCCESS') );
 	}
 
 	function upgrade()
@@ -142,7 +137,6 @@ PRIMARY KEY (  `folder_name` )
 	{
 		$uid = intval(v('uid'));
 		if( $uid< 1 ) return  null;
-
 		$params = array();
 		$params['uid'] = $uid;
 		
@@ -154,7 +148,6 @@ PRIMARY KEY (  `folder_name` )
 
 			$data['data']['items'] = array_reverse($data['data']['items']);
 			return render( $data , 'ajax' , 'raw'  );
-
 		}
 
 		return null;
@@ -224,13 +217,11 @@ PRIMARY KEY (  `folder_name` )
 		$params['max_id'] = intval(v('max_id'));
 		$params['since_id'] = intval(v('since_id'));
 		$params['uid'] = intval(v('uid'));
-		
-		// mark all chat as read so we can list it in "history"
 		$content = send_request( 'get_fresh_chat' ,  $params , token() );
+
 		if($content = send_request( 'im_history' ,  $params , token()  ))
 		{
 			$data = json_decode($content , 1);
-			//print_r( $data );
 			if( intval($data['err_code']) != 0 ) 
 				return false;
 
@@ -248,14 +239,11 @@ PRIMARY KEY (  `folder_name` )
 	{
 		$uid = intval(v('uid'));
 		if( $uid< 1 ) return  render( array( 'code' => 100002 , 'message' => __('INPUT_CHECK_BAD_ARGS' , 'UID' )  ) , 'rest' );
-		
 		$text = z(t(v('text')));
 		if( strlen($text) < 1 ) return  render( array( 'code' => 100002 , 'message' => __('INPUT_CHECK_BAD_ARGS' , 'TEXT') ) , 'rest' );
-		
 		$params = array();
 		$params['uid'] = $uid;
 		$params['text'] = $text;
-
 
 		if($content = send_request( 'im_send' ,  $params , token()  ))
 		{
@@ -269,7 +257,6 @@ PRIMARY KEY (  `folder_name` )
 		}
 
 		return render( array( 'code' => 100001 , 'message' => __('API_MESSAGE_CANNOT_CONNECT') ) , 'rest' );
-  
 	}
 
 	function im_buddy_list()
