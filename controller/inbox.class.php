@@ -12,7 +12,6 @@ class inboxController extends appController
 	
 	function index()
 	{
-		
 		$data['title'] = $data['top_title'] = __('INBOX_PAGE_TITLE');
 		render( $data , 'web' , 'card' );
 	}
@@ -26,9 +25,9 @@ class inboxController extends appController
 	{
 		$token = $_SESSION['token'];
 		$api = parse_url(c('api_server') , PHP_URL_HOST  );
-
 		$data['url'] = $token . '|' . $api .'|'. $_SESSION['uname'] .'|' . uid() . '|' . $_SESSION['level'] ;
-		render( $data , 'ajax' , 'raw' );
+		
+        render( $data , 'ajax' , 'raw' );
 	}
 
 	function client()
@@ -36,12 +35,11 @@ class inboxController extends appController
 		if(v('type') == 'android') $type = 'android';
 		else $type = 'ios';
 		$data['type'] = $type;
-
 		$token = $_SESSION['token'];
 		$api = parse_url(c('api_server') , PHP_URL_HOST  );
-
 		$data['url'] = $token . '|' . $api .'|'. $_SESSION['uname'] .'|' . uid() . '|' . $_SESSION['level'] ;
-		render( $data , 'ajax' , 'raw' );
+		
+        render( $data , 'ajax' , 'raw' );
 	}
 
 	
@@ -52,17 +50,13 @@ class inboxController extends appController
 		
 		if($content = send_request( 'notice_list' ,  $params , token()  ))
 		{
-			//echo $content;
 			$data = json_decode($content , 1);
 			if( intval($data['err_code']) != 0 ) 
 				return false;
 			
 			return render( $data , 'ajax' , 'raw'  );
-
 		}
 
 		return null;
 	}
-
-	
 }

@@ -41,7 +41,7 @@ class pluglistController extends appController
 
 	function upload()
 	{
-		if( !is_admin() ) 
+		if( !is_admin() )
 			return info_page(__('ADMIN_ONLY_LOGIN'));
 
 		$data = array();
@@ -57,9 +57,9 @@ class pluglistController extends appController
 			return info_page( __('PLUGIN_UPLOAD_FILE_ERROR_RETRY') );
 		
 		$tmp_name = $_FILES['pfile']['tmp_name'];
-
 		$tname = uid() . '-' . time();
 		$plug_path = c('plugin_path') . DS . $tname;
+
 		if(@mkdir( $plug_path ))
 		{
 			include_once( AROOT.'lib'.DS.'dUnzip2.inc.php' );
@@ -87,23 +87,13 @@ class pluglistController extends appController
 					}
 					else 
 						return info_page( __( 'PLUGIN_GET_NAME_ERROR_RETRY' , $tname )  );  
-
 				}
 			}
 			else
 			{
-				// clear dir
-
-			}	
-
+			}
 			return 	info_page(__('PLUGIN_PACKAGE_FORMAT_ERROR'));  
-			
-			
-
 		}else 
 			return info_page( __('PLUGIN_CREATE_FOLDER_ERROR') );
-		
-
 	}
-
 }

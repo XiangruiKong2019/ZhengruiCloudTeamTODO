@@ -10,7 +10,7 @@ class pluginController extends appController
 		$this->check_login();
 	}
 	
-	 public function __call( $method , $args)
+	public function __call( $method , $args)
     {
     	return do_action( 'PLUGIN_' . $method , $args );
     }

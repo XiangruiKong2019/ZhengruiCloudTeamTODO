@@ -1,7 +1,6 @@
 <?php
 define( 'USER_INFO' , "`id` ,  `id` as  `uid` , `name` , `mobile` , `tel` , `eid` , `weibo` , `desp` , `groups` , `pinyin` , `email` , `avatar_small` , `avatar_normal` , `level` , `timeline` , `is_closed`" );
 
-
 function get_user_info_by_id( $uid )
 {
 	if( $data = get_line( "SELECT " . USER_INFO . " FROM `user` WHERE `id` = '" . intval( $uid ) . "'" , db() ) )
@@ -9,7 +8,6 @@ function get_user_info_by_id( $uid )
 			$data['groups'] = explode('|', trim( $data['groups'] , '|' )) ;
 	
 	return $data;
-	
 }
 
 function get_user_full_info_by_id( $uid )
@@ -57,7 +55,7 @@ function close_user_by_id( $uid )
 function get_user_settings_by_id( $uid )
 {
 	$sql = "SELECT `settings` FROM `user` WHERE `id` = '" . intval($uid) . "' LIMIT 1";
-	if( $settings = get_var($sql) )//
+	if( $settings = get_var($sql) )
 		return $array = unserialize( $settings );
 	elseif( db_errno() == 0 )
 		return array();
@@ -265,7 +263,7 @@ function publish_feed( $content , $uid , $type = 0 , $tid = 0  )
 	$lid = last_id();
 	
 	if( db_errno() != 0 )
-		return  false;
+		return false;
 	else
 	{
 		if( $comment_count > 0 && $type == 2 && $tid > 0 )
@@ -276,21 +274,4 @@ function publish_feed( $content , $uid , $type = 0 , $tid = 0  )
 		
 		return $lid ;
 	}
-		
 }
-
-
-
-
-//
-
-
-
-
-
-
-
-
-
-
-

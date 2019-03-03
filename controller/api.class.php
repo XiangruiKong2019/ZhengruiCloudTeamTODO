@@ -15,7 +15,6 @@ define( 'LR_API_UPGRADE_ABORT' , 10011 );
 
 class apiController extends appController
 {
-    // 构造函数
     function __construct()
     {
         parent :: __construct();
@@ -194,67 +193,12 @@ class apiController extends appController
 			return self::send_result( array( 'newpass' => $newpass ) );
     }
 
-    function upgrade()
-    {
-    	if( $_SESSION['level'] != '9' )
-		return self::send_error( LR_API_FORBIDDEN , __('API_MESSAGE_ONLY_ADMIN') );
-
-    	$url = c('teamtoy_url') . '/?a=last_version&domain=' . c('site_domain') . '&uid=' . uid();
-    	if( c('dev_version') ) $url = $url . '&dev=1';
-
-    	$info = json_decode( file_get_contents( $url ) , true);
-    	if( !isset($info['url']) ) return  self::send_error( LR_API_UPGRADE_ERROR , __('API_MESSAGE_UPGARDE_INFO_DATA_ERROR') );
-    	$url = t($info['url']);
-
-
-		$vid = intval($info['version']);
-		if( $vid < 1 ) return  self::send_error( LR_API_UPGRADE_ERROR , __('API_MESSAGE_UPGARDE_INFO_DATA_ERROR') );
-
-		if( $vid == local_version() )
-		{
-			return  self::send_error( LR_API_UPGRADE_ABORT , __('API_MESSAGE_UPGARDE_ALREADY_LATEST') );
-		}
-
-		$zip_tmp = SAE_TMP_PATH . DS . 'teamtoy2-' . intval($vid) . '.zip';
-
-		if( @copy( $url ,  $zip_tmp )  )
-		{
-			include_once( AROOT.'lib'.DS.'dUnzip2.inc.php' );
-			$zip = new dUnzip2( $zip_tmp );
-			$zip->debug = false;
-
-			$zip->unzipAll( AROOT  );
-			@chmod( AROOT , 0755 );
-
-			if( isset( $info['post_script'] ) ) $pscript = t($info['post_script']);
-			else $pscript = false;
-
-			if( local_version() == $vid )
-			{
-				if( $pscript )
-					send_notice( uid() , __('API_TEXT_ALREADY_UPGARDE_TO' ,  array ( $vid , c('site_url') . $pscript) ), 0  );
-
-				return self::send_result( array('msg'=>'ok','post_script'=>$pscript) );
-			}
-
-			else
-				return  self::send_error( LR_API_UPGRADE_ERROR , __('API_MESSAGE_UPGARDE_FILE_UNZIP_ERROR') );
-
-
-		}
-		else
-		{
-			return  self::send_error( LR_API_UPGRADE_ERROR , __('API_MESSAGE_UPGARDE_FILE_FETCH_ERROR') );
-		}
-    }
-
     function user_profile()
     {
     	$uid = intval(v('uid'));
 		if( $uid < 1 ) return self::send_error( LR_API_ARGS_ERROR , __('INPUT_CHECK_BAD_ARGS' , 'UID' ) );
 
 		return self::send_result( get_user_info_by_id($uid) );
-
     }
 
 	function user_update_profile()

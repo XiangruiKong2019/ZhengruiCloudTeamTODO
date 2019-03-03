@@ -18,7 +18,6 @@ function not_empty( $str )
 	return strlen( $str ) > 0;
 }
 
-// From aoihome.sinaapp.com/fun via Aoi [is_email]
 function is_email( $email )
 {
 	return filter_var( $email , FILTER_VALIDATE_EMAIL );
@@ -67,10 +66,7 @@ function db_init()
 {
     
     $password = substr( md5( time().rand(1,9999) ) , rand( 1 , 20 ) , 12   );
-    
     $sql_contents = preg_replace( "/(#.+[\r|\n]*)/" , '' , file_get_contents( AROOT . 'misc' . DS . 'install.sql'));
-
-    // 更换变量
     $sql_contents = str_replace( '{password}' , md5($password) , $sql_contents );
 
     $sqls = split_sql_file( $sql_contents );
@@ -106,7 +102,6 @@ function split_sql_file($sql, $delimiter = ';')
     for ($i = 0; $i < strlen($sql); ++$i) {
             $char = $sql[$i];
 
-            // if delimiter found, add the parsed part to the returned array
             if ($char == $delimiter && !$in_string) {
                     $ret[]     = substr($sql, 0, $i);
                     $sql       = substr($sql, $i + 1);
@@ -115,7 +110,6 @@ function split_sql_file($sql, $delimiter = ';')
             }
 
             if ($in_string) {
-                    // We are in a string, first check for escaped backslashes
                     if ($char == '\\') {
                             if ($last_char != '\\') {
                                     $escaped_backslash = FALSE;
@@ -123,24 +117,21 @@ function split_sql_file($sql, $delimiter = ';')
                                     $escaped_backslash = !$escaped_backslash;
                             }
                     }
-                    // then check for not escaped end of strings except for
-                    // backquotes than cannot be escaped
+
                     if (($char == $string_start)
                             && ($char == '`' || !(($last_char == '\\') && !$escaped_backslash))) {
                             $in_string    = FALSE;
                             $string_start = '';
                     }
             } else {
-                    // we are not in a string, check for start of strings
                     if (($char == '"') || ($char == '\'') || ($char == '`')) {
                             $in_string    = TRUE;
                             $string_start = $char;
                     }
             }
             $last_char = $char;
-    } // end for
+    }
 
-    // add any rest to the returned array
     if (!empty($sql)) {
             $ret[] = $sql;
     }
@@ -195,13 +186,6 @@ function ctime( $timeline )
     elseif( time() > ($time+60*60*8) ) return date( __('DATE_SHORT_FORMAT') ,$time);
     else return date("H:i:s",$time);
 }
-
-/*
-function rtime( $timeline )
-{
-	return date("m月d日 H点i分" , strtotime($timeline) );
-}
-*/
 
 function rtime( $time = false, $limit = 86400, $format = null) 
 {
@@ -259,7 +243,6 @@ function render_html( $data , $tpl )
 	$content = ob_get_contents();
 	ob_end_clean();
 	return $content;
-	// 
 }
 
 function read_class( $is_read )
@@ -268,7 +251,7 @@ function read_class( $is_read )
     else return  'unread';
 }
 
-function feed_class(  $type )
+function feed_class( $type )
 {
 	switch( $type )
 	{
@@ -308,12 +291,6 @@ function get_device()
     else return 'web';
 }
 
-
-// ========================================
-// client functions
-// ========================================
-
-
 function login( $email , $password )
 {
     $params = array();
@@ -341,8 +318,6 @@ function send_request( $action , $param , $token = null )
 	require_once( AROOT . 'controller' . DS . 'api.class.php' );
     require_once( AROOT . 'model' . DS . 'api.function.php' );
     $GLOBALS['API_EMBED_MODE'] = 1;
-        
-    // local request
     $bake_request = $_REQUEST;
     $_REQUEST['c'] = 'api';
     $GLOBALS['a'] = $_REQUEST['a'] = $action;
@@ -354,10 +329,8 @@ function send_request( $action , $param , $token = null )
         {
             $_REQUEST[$key] =  $value ;
         }
-            
 
     $api = new apiController();
-    // magic call
     if( method_exists($api, $action) || has_hook('API_'.$action) )
     {
         $content = $api->$action();
@@ -365,8 +338,6 @@ function send_request( $action , $param , $token = null )
         $GLOBALS['a'] = $_REQUEST['a'];
        
         return $content;
-        //if($data = json_decode( $content , 1 ))
-        //return json_encode($data['data']);
     }
     else
     {
@@ -374,24 +345,6 @@ function send_request( $action , $param , $token = null )
     }
    
     return null;
-    
-    
-    // remote request ...........
-    /*
-
-    $url = c('api_server') . '?c=api&a=' . u($action) . '&token=' . u($token) ;
-	
-	if( (is_array( $param )) && (count($param) > 0) )
-		foreach( $param as $key => $value )
-			$url .= '&' . $key . '=' . u( $value );
-	
-	
-
-	if($content = file_get_contents( $url ))
-		return $content;
-	
-	return $url;
-	*/
 }
 
 function find_at( $text )
@@ -401,7 +354,6 @@ function find_at( $text )
 		return $out[1];
 	else
 		return false;
-
 }
 
 function jpeg_up( $source , $dest )
@@ -429,9 +381,6 @@ function jpeg_up( $source , $dest )
   	$img_src = ImageCreateFromJPEG( $source );
     $rotate = imagerotate($img_src, $r, 0,true);    
 	ImageJPEG($rotate,$dest);
-        
-        
-        
 }
 
 function upload_as_form( $url , $data )
@@ -453,7 +402,7 @@ function upload_as_form( $url , $data )
 
 
 function pinyin($_string, $_code='utf8')
-{ //gbk页面可改为gb2312，其他随意填写为utf8
+{
         $_datakey = "a|ai|an|ang|ao|ba|bai|ban|bang|bao|bei|ben|beng|bi|bian|biao|bie|bin|bing|bo|bu|ca|cai|can|cang|cao|ce|ceng|cha". 
                         "|chai|chan|chang|chao|che|chen|cheng|chi|chong|chou|chu|chuai|chuan|chuang|chui|chun|chuo|ci|cong|cou|cu|". 
                         "cuan|cui|cun|cuo|da|dai|dan|dang|dao|de|deng|di|dian|diao|die|ding|diu|dong|dou|du|duan|dui|dun|duo|e|en|er". 
@@ -512,7 +461,7 @@ function pinyin($_string, $_code='utf8')
                 $_res .= _pinyin($_p, $_data); 
         } 
         return preg_replace("/[^a-z0-9]*/", '', $_res); 
-} 
+}
 
 function _pinyin($_num, $_data)
 { 
@@ -547,9 +496,6 @@ function _u2_utf8_gb($_c)
         return iconv('utf-8', 'gb2312', $_string); 
 }
 
-// **************************************************************
-// * Plugins & hooks
-// ************************************************************** 
 function add_filter( $tag , $function_to_add , $priority = 10 , $accepted_args_num = 1 )
 {
     return add_hook( $tag , $function_to_add , $priority , $accepted_args_num );
@@ -576,8 +522,6 @@ function apply_filter( $tag , $value = null )
 {
     return apply_hook( $tag , $value );
 }
-
-
 
 function apply_hook( $tag , $value )
 {
@@ -629,7 +573,6 @@ function build_hook_id( $tag , $function )
 
     if ( is_object($function) ) 
     {
-        // Closures are currently implemented as objects
         $function = array( $function, '' );
     }
     else
@@ -639,7 +582,6 @@ function build_hook_id( $tag , $function )
 
     if (is_object($function[0]) ) 
     {
-        // Object Class Calling
         if ( function_exists('spl_object_hash') ) 
         {
             return spl_object_hash($function[0]) . $function[1];
@@ -652,7 +594,6 @@ function build_hook_id( $tag , $function )
     }
     elseif( is_string($function[0]) )
     {
-        // Static Calling
         return $function[0].$function[1];
     }
 }
@@ -697,9 +638,6 @@ function ttpassv2( $password , $salt = '' )
     return substr( md5(md5( $password  ) . 'T!e*a-m^T$o#y' . $salt  ) , 0 , 30 );
 }
 
-// =================================================
-// make mentions
-// =================================================
 function member_info()
 {
     if( !isset($GLOBALS['TT_MEMBER_INFO']) )
@@ -756,8 +694,6 @@ function replace_links( $html )
         return $ret;
     }
     else return $html;
-   
-
 }
 
 function js_i18n( $array )
@@ -799,7 +735,6 @@ function phpmailer_send_mail(  $to , $subject , $body , $from ,  $host , $port ,
     $mail->IsSMTP(); 
     $mail->Host = $host;
     $mail->SMTPAuth = true;   
-    //$mail->SMTPKeepAlive = true;
     $mail->Port = $port;
     $mail->Username = $user;
     $mail->Password = $password;
@@ -814,7 +749,6 @@ function phpmailer_send_mail(  $to , $subject , $body , $from ,  $host , $port ,
     if(!$mail->Send())
     {
         $GLOBALS['LP_MAILER_ERROR'] = $mail->ErrorInfo;
-        //echo $mail->ErrorInfo;
         return false;
     }
     else
@@ -822,12 +756,5 @@ function phpmailer_send_mail(  $to , $subject , $body , $from ,  $host , $port ,
         $mail->ClearAddresses();
         return true;
     }
-   
-
-
-    
-
 }
-
-
 ?>
