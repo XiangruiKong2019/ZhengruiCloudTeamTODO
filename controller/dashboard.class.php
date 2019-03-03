@@ -299,7 +299,6 @@ PRIMARY KEY (  `folder_name` )
 		
 		$params = array();
 		$params['uid'] = uid();
-
 		
 		if($content = send_request( 'user_profile' ,  $params , token()  ))
 		{
@@ -334,7 +333,6 @@ PRIMARY KEY (  `folder_name` )
 		}
 		else
 		{
-			// do crop
 			$src = $_FILES['ufile']['tmp_name'];
 
 			list($width, $height, $type, $attr)=getimagesize($src); 
@@ -347,16 +345,10 @@ PRIMARY KEY (  `folder_name` )
 				$img_r = imagecreatefromjpeg($src);
 
 			$dst_r = ImageCreateTrueColor( $targ_w, $targ_h );
-			
 			imagecopyresampled($dst_r,$img_r,0,0, $x  ,$y ,$targ_w,$targ_h,$w,$h);
-			
 			$tmp_name = SAE_TMP_PATH.uid().'-avatar';
 			imagejpeg( $dst_r , $tmp_name , 90 );
-
 		}
-
-
-		
 
 		$data['token'] = token();
 		$data['file'] = '@'.$tmp_name;
@@ -382,15 +374,11 @@ PRIMARY KEY (  `folder_name` )
 	{
 		$opassword = z(t(v('oldpassword')));
 		if( strlen($opassword) < 1 ) return  render( array( 'code' => 100002 , 'message' => __('INPUT_CHECK_NO_OLDPASS') ) , 'rest' );
-		
 		$password = z(t(v('newpassword')));
 		if( strlen($password) < 1 ) return  render( array( 'code' => 100002 , 'message' => __('INPUT_CHECK_NO_NEWPASS') ) , 'rest' );
-		
-
 		$params = array();
 		$params['opassword'] = $opassword;
 		$params['password'] = $password;
-		
 
 		if($content = send_request( 'user_update_password' ,  $params , token()  ))
 		{
@@ -404,17 +392,13 @@ PRIMARY KEY (  `folder_name` )
 		return render( array( 'code' => 100001 , 'message' => __('API_MESSAGE_CANNOT_CONNECT') ) , 'rest' );
 	}
 
-
-
 	function update_profile()
 	{
 		$email = z(t(v('email')));
 		if( strlen($email) < 1 ) return  render( array( 'code' => 100002 , 'message' => __('INPUT_CHECK_BAD_ARGS' , 'EMAIL' ) ) , 'rest' );
-		
 		$mobile = z(t(v('mobile')));
 		if( strlen($mobile) < 1 ) return  render( array( 'code' => 100002 , 'message' => __('INPUT_CHECK_BAD_ARGS' , 'MOBILE' ) ) , 'rest' );
-		
-
+	    
 		$params = array();
 		$params['mobile'] = $mobile;
 		$params['tel'] = z(t(v('tel')));
@@ -422,8 +406,6 @@ PRIMARY KEY (  `folder_name` )
 		$params['weibo'] = z(t(v('weibo')));
 		$params['desp'] = z(t(v('desp')));
 		$params['email'] = $email;
-		
-		
 
 		if($content = send_request( 'user_update_profile' ,  $params , token()  ))
 		{
@@ -475,16 +457,13 @@ PRIMARY KEY (  `folder_name` )
 				$data['tid'] = intval(v('tid'));
 				return render( $data , 'ajax' , 'raw'  );
 			}
-				
 		}
-
 	}
 
 	function todo_edit()
 	{
 		$tid = intval(v('tid'));
 		if( $tid < 1 ) return ajax_echo( __('INPUT_CHECK_BAD_ARGS' , 'TID' ) );
-
 		$text = z(t(v('text')));
 		if( strlen($text) < 1 ) return ajax_echo( __('INPUT_CHECK_NO_TODO_TITLE') );
 
@@ -497,7 +476,6 @@ PRIMARY KEY (  `folder_name` )
 
 	function todo_assign()
 	{
-		// todo_assign
 		$tid = intval(v('tid'));
 		if( $tid < 1 ) return render( array( 'code' => 100002 , 'message' => __('INPUT_CHECK_BAD_ARGS' , 'TID' ) ) , 'rest' );
 		
@@ -515,10 +493,6 @@ PRIMARY KEY (  `folder_name` )
 		}
 
 		return render( array( 'code' => 100001 , 'message' => __('API_MESSAGE_CANNOT_CONNECT') ) , 'rest' );
-
-
-
-
 	}
 
 	function todo_center()
@@ -544,8 +518,6 @@ PRIMARY KEY (  `folder_name` )
 
 	function todo_detail()
 	{
-
-		//return ajax_echo( print_r( $_REQUEST , 1 ) );
 		$tid = intval(v('tid'));
 		if( $tid < 1 ) return info_page(__('INPUT_CHECK_BAD_ARGS' , 'TID' ));
 
@@ -584,7 +556,6 @@ PRIMARY KEY (  `folder_name` )
 		}
 
 		return render( array( 'code' => 100001 , 'message' => __('API_MESSAGE_CANNOT_CONNECT') ) , 'rest' );
-
 	}
 
 	function todo_public()
@@ -691,7 +662,6 @@ PRIMARY KEY (  `folder_name` )
 			}
 			else
 				return render( array( 'code' => 100002 , 'message' => __('API_MESSAGE_SAVE_DATA_ERROR') ) , 'rest' );
-			//return render( array( 'code' => 0 , 'data' => $data['data'] ) , 'rest' );
 		}
 
 		return render( array( 'code' => 100001 , 'message' => __('API_MESSAGE_CANNOT_CONNECT') ) , 'rest' );
@@ -700,7 +670,6 @@ PRIMARY KEY (  `folder_name` )
 
 	function todo_all_done()
 	{
-		//todo_remove_done
 		$params = array();
 		if($content = send_request( 'todo_all_done' ,  $params , token()  ))
 		{
@@ -718,7 +687,6 @@ PRIMARY KEY (  `folder_name` )
 
 	function todo_clean()
 	{
-		//todo_remove_done
 		$params = array();
 		if($content = send_request( 'todo_remove_done' ,  $params , token()  ))
 		{
@@ -756,7 +724,6 @@ PRIMARY KEY (  `folder_name` )
 			}
 			else
 				return render( array( 'code' => 100002 , 'message' => __('API_MESSAGE_SAVE_DATA_ERROR') ) , 'rest' );
-			//return render( array( 'code' => 0 , 'data' => $data['data'] ) , 'rest' );
 		}
 
 		return render( array( 'code' => 100001 , 'message' => __('API_MESSAGE_CANNOT_CONNECT') ) , 'rest' );
@@ -785,7 +752,6 @@ PRIMARY KEY (  `folder_name` )
 			}
 			else
 				return render( array( 'code' => 100002 , 'message' => __('API_MESSAGE_SAVE_DATA_ERROR') ) , 'rest' );
-			//return render( array( 'code' => 0 , 'data' => $data['data'] ) , 'rest' );
 		}
 
 		return render( array( 'code' => 100001 , 'message' => __('API_MESSAGE_CANNOT_CONNECT') ) , 'rest' );
@@ -796,43 +762,31 @@ PRIMARY KEY (  `folder_name` )
 	{
 		$text = z(t(v('text')));
 		if( strlen( $text ) < 1 ) render( array( 'code' => 100002 , 'message' => __('INPUT_CHECK_BAD_ARGS' , 'TEXT' ) ) , 'rest' );
-
 		$params = array();
 		$params['text'] = $text;
 		$params['is_public'] = intval(v('is_public'));
 		$params['uid'] = intval(v('uid'));
-		
 		
 		if($content = send_request( 'todo_add' ,  $params , token()  ))
 		{
 			$data = json_decode($content , 1);
 			if( $data['err_code'] == 0 )
 			{
-				// 
 				$tid = intval($data['data']['id']) ;
 				if( ($tid > 0) && (intval(v('is_star')) == 1) )
 					send_request( 'todo_star' ,  array( 'tid' => $tid ) , token()  );
-
-
-
 				$data['data']['is_public'] = $data['data']['details']['is_public'];
 				return render( array( 'code' => 0 , 'data' =>  array( 'html' => render_html( array( 'item' => $data['data'] ) , AROOT . 'view' 
 						. DS . 'layout' . DS . 'ajax' . DS . 'widget' . DS . 'todo.tpl.html' ) , 'other' => intval($data['data']['other'])   ) ) , 'rest' );
 			}
 			else
 				return render( array( 'code' => 100002 , 'message' => __('API_MESSAGE_SAVE_DATA_ERROR') ) , 'rest' );
-			//return render( array( 'code' => 0 , 'data' => $data['data'] ) , 'rest' );
 		}
 
 		return render( array( 'code' => 100001 , 'message' => __('API_MESSAGE_CANNOT_CONNECT') ) , 'rest' );
 
 	}
 
-	/**
-	 * build data for ajax
-	 *
-	 * @return void
-	 **/
 	function todo_data()
 	{
 		$type = z(t(v('type')));
@@ -842,7 +796,6 @@ PRIMARY KEY (  `folder_name` )
 		$params['ord'] = 'desc';
 		$params['count'] = '100';
 		$params['group'] = '1';
-		
 		
 		if($content = send_request( 'todo_list' ,  $params , token()  ))
 		{
@@ -855,17 +808,10 @@ PRIMARY KEY (  `folder_name` )
 				elseif( $type == 'star' ) $data['data'] =  $data['data']['star'];
 				elseif( $type == 'done' ) $data['data'] =  $data['data']['done'];
 				else $data['data'] =  $data['data']['normal'];
-
 			} 
 				return render( $data , 'ajax' , 'raw'  );
 
 		}
-
-		return null;
-
-
-		
-				
+		return null;		
 	}
-	
 }

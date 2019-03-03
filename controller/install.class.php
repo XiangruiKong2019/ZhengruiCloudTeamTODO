@@ -22,18 +22,6 @@ class installController extends appController
 			$data['title'] = $data['top_title'] =  __('INSTALL_PAGE_TITLE') ;
 			return render( $data , 'web' , 'fullwidth' );
 		}
-			
-
 	}
-
-	function index_en()
-	{
-		$GLOBALS['i18n'] = 'us_en';
-		return $this->index();
-	}
-	
-	
-	
-	
 }
 	
