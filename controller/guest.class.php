@@ -13,11 +13,9 @@ class guestController extends appController
 	{
 		if( is_mobile_request() ) return forward( 'client/' );
 		if( is_login() ) return forward( '?c=dashboard' );
-		
-		// do login
+
 		$data['title'] = $data['top_title'] = __('LOGIN_PAGE_TITLE');
 		$data['css'][] = 'login_screen.css';
-
 		$data['langs'] = @glob( AROOT . 'local/*.lang.php'  );
 
 		return render( $data , 'web' , 'fullwidth'  );
@@ -44,7 +42,6 @@ class guestController extends appController
 		$data['js_items'] = js_i18n( $GLOBALS['language'][$c] );
 
 		return render( $data , 'ajax' , 'js' );
-
 	}
 	
 	function login()
